@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-casc
+data:
+  ldap.yaml: |
+    jenkins:
+      securityRealm:
+        ldap:
+          configurations:
+            - displayNameAttributeName: "name"
+              groupSearchBase: "OU=Groups,OU=MyCompany"
+              groupSearchFilter: "(& (cn={0}) (objectclass=group) )"
+              inhibitInferRootDN: false
+              managerDN: "CN=Jenkins Admin,OU=UsersSystem,OU=UsersOther,OU=MyCompany,DC=mycompany,DC=local"
+              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}"
+              rootDN: "DC=mycompany,DC=local"
+              server: "MyCompany.local"
+              userSearch: "SamAccountName={0}"
+              userSearchBase: "OU=MyCompany"
+          disableMailAddressResolver: false
+          disableRolePrefixing: true
+          groupIdStrategy: "caseInsensitive"
+          userIdStrategy: "caseInsensitive" 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-configure-theme.groovy: | 
+    import jenkins.*
+    import jenkins.model.*
+    import hudson.*
+    import hudson.model.*
+    import org.jenkinsci.plugins.simpletheme.ThemeElement
+    import org.jenkinsci.plugins.simpletheme.CssTextThemeElement
+    import org.jenkinsci.plugins.simpletheme.CssUrlThemeElement
+
+    Jenkins jenkins = Jenkins.getInstance()
+
+    def decorator = Jenkins.instance.getDescriptorByType(org.codefirst.SimpleThemeDecorator.class)
+
+    List<ThemeElement> configElements = new ArrayList<>();
+    configElements.add(new CssTextThemeElement("DEFAULT"));
+    configElements.add(new CssUrlThemeElement("https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-light-green.css"));
+    decorator.setElements(configElements);
+    decorator.save();
+
+    jenkins.save()
+  1-system-message.yaml: |
+    jenkins:
+      systemMessage: "Configuration as Code integration works!!!"    
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-system-message.yaml: |
+    jenkins:
+      systemMessage: ${SYSTEM_MESSAGE}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-system-message.groovy: | 
+    import jenkins.*
+    import jenkins.model.*
+    import hudson.*
+    import hudson.model.*
+    Jenkins jenkins = Jenkins.getInstance()
+    
+    jenkins.setSystemMessage(secrets["SYSTEM_MESSAGE"])
+    jenkins.save()
