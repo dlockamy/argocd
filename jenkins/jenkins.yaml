@@ -9,13 +9,29 @@ spec:
     secret:
       name: ""
   groovyScripts:
-    configurations: []
+    configurations:
+    - name: jenkins-operator-user-configuration
     secret:
-      name: ""
+      name: jenkins-conf-secrets
   jenkinsAPISettings:
     authorizationStrategy: createUser
   master:
     disableCSRFProtection: false
+    basePlugins:
+    - name: kubernetes
+      version: "1.30.11"
+    - name: workflow-job
+      version: "2.42"
+    - name: workflow-aggregator
+      version: "2.6"
+    - name: git
+      version: "4.10.0"
+    - name: job-dsl
+      version: "1.78.1"
+    - name: configuration-as-code
+      version: "1.55"
+    - name: kubernetes-credentials-provider
+      version: "0.20"
     containers:
       - name: jenkins-master
         image: jenkins/jenkins:2.541.1-lts
@@ -49,7 +65,7 @@ spec:
             memory: 500Mi
   seedJobs:
     - id: jenkins-operator
-      targets: "cicd/jobs/*.jenkins"
+      targets: "jenkins/cicd/jobs/*.jenkins"
       description: "Jenkins Operator repository"
       repositoryBranch: master
-      repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+      repositoryUrl: https://github.com/dlockamy/argocd.git
