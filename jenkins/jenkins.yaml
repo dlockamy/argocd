@@ -32,8 +32,8 @@ spec:
       version: "1.55"
     - name: kubernetes-credentials-provider
       version: "0.20"
-    - name: ldap
-      version: "2.7"
+#    - name: ldap
+#      version: "2.7"
     containers:
       - name: jenkins-master
         image: jenkins/jenkins:2.541.1-lts
