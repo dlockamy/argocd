@@ -6,7 +6,7 @@ metadata:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jenkins_example_backup
+  name: jenkins-backup
   namespace: jenkins
 spec:
   accessModes:
@@ -213,7 +213,7 @@ spec:
     volumes:
       - name: backup # PVC volume where backups will be stored
         persistentVolumeClaim:
-          claimName: <pvc_name>
+          claimName: jenkins-backup
   backup:
     containerName: backup # container name is responsible for backup
     action:
