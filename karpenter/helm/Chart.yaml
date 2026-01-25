@@ -8,6 +8,5 @@ appVersion: "1.0.0"
 
 dependencies:
   - name: karpenter
-    version: "v0.34.0"
-    # TAKE THAT, KARPENTER TEAM! NO TOKENS FOR YOU!!
+    version: "1.8.6"
     repository: "oci://public.ecr.aws/karpenter"
