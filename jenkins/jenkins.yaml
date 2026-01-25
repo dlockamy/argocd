@@ -1,3 +1,127 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins_example_backup
+  namespace: jenkins
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jenkins-ingress
+  namespace: jenkins
+spec:
+  ingressClassName: traefik # Specify your Ingress Controller class
+  rules:
+  - host: "jenkins.fairmerce.com"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jenkins-operator-http-example # The name of your Jenkins Service
+            port:
+              number: 8080 # The port the Jenkins Service exposes
+---
+kind: Secret
+apiVersion: v1
+type: Opaque
+metadata:
+  name: jenkins-conf-secrets
+  namespace: default
+data:
+  SYSTEM_MESSAGE: SGVsbG8gd29ybGQ=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-casc
+data:
+  ldap.yaml: |
+    jenkins:
+      securityRealm:
+        ldap:
+          configurations:
+            - displayNameAttributeName: "name"
+              groupSearchBase: "OU=Groups,OU=MyCompany"
+              groupSearchFilter: "(& (cn={0}) (objectclass=group) )"
+              inhibitInferRootDN: false
+              managerDN: "CN=Jenkins Admin,OU=UsersSystem,OU=UsersOther,OU=MyCompany,DC=mycompany,DC=local"
+              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}"
+              rootDN: "DC=mycompany,DC=local"
+              server: "MyCompany.local"
+              userSearch: "SamAccountName={0}"
+              userSearchBase: "OU=MyCompany"
+          disableMailAddressResolver: false
+          disableRolePrefixing: true
+          groupIdStrategy: "caseInsensitive"
+          userIdStrategy: "caseInsensitive" 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-configure-theme.groovy: | 
+    import jenkins.*
+    import jenkins.model.*
+    import hudson.*
+    import hudson.model.*
+    import org.jenkinsci.plugins.simpletheme.ThemeElement
+    import org.jenkinsci.plugins.simpletheme.CssTextThemeElement
+    import org.jenkinsci.plugins.simpletheme.CssUrlThemeElement
+
+    Jenkins jenkins = Jenkins.getInstance()
+
+    def decorator = Jenkins.instance.getDescriptorByType(org.codefirst.SimpleThemeDecorator.class)
+
+    List<ThemeElement> configElements = new ArrayList<>();
+    configElements.add(new CssTextThemeElement("DEFAULT"));
+    configElements.add(new CssUrlThemeElement("https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-light-green.css"));
+    decorator.setElements(configElements);
+    decorator.save();
+
+    jenkins.save()
+  1-system-message.yaml: |
+    jenkins:
+      systemMessage: "Configuration as Code integration works!!!"    
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-system-message.yaml: |
+    jenkins:
+      systemMessage: ${SYSTEM_MESSAGE}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-user-configuration
+data:
+  1-system-message.groovy: | 
+    import jenkins.*
+    import jenkins.model.*
+    import hudson.*
+    import hudson.model.*
+    Jenkins jenkins = Jenkins.getInstance()
+    
+    jenkins.setSystemMessage(secrets["SYSTEM_MESSAGE"])
+    jenkins.save()
+---
 apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
@@ -108,8 +232,6 @@ spec:
       exec:
         command:
           - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion; not having it in the CR may cause loss of data
-
-
   seedJobs:
     - id: jenkins-operator
       targets: "jenkins/cicd/jobs/*.jenkins"
