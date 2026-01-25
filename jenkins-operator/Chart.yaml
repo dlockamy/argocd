@@ -6,6 +6,6 @@ version: 0.1.0
 appVersion: "1.0"
 
 dependencies:
-- name: jenkins/jenkins-operator
-  version: 0.8.0
+- name: jenkins-operator
+  version: 0.8.1
   repository: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
