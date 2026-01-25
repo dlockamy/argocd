@@ -1,0 +1,7 @@
+karpenter:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "none"
+  settings:
+    clusterName: "none"
+    interruptionQueue: "none"
