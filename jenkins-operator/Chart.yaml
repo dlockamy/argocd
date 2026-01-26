@@ -6,6 +6,8 @@ version: 0.1.0
 appVersion: "1.0"
 
 dependencies:
-- name: tekton-operator
-  version: v0.78.1
-  repository: https://tektoncd.github.io
+- name: jenkins-operator
+  version: 0.8.1
+  repository: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+
+  
