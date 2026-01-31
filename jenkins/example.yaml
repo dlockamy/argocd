@@ -82,4 +82,4 @@ metadata:
 data:
   1-system-message.yaml: |
     jenkins:
-      systemMessage: "hello world"  
+      systemMessage: "hello world"
