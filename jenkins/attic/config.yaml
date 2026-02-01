@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: my-jenkins-casc-config
+  name: jenkins-common-security-realms
 data:
   # The key name here can be anything, but commonly ends in .yaml
   jenkins.yaml: |
@@ -15,6 +15,25 @@ data:
           users:
             - id: "admin"
               password: "${ADMIN_PASSWORD}" # Use variables for secrets
+        ldap:
+          configurations:
+          - displayNameAttributeName: "cn"
+            groupMembershipStrategy:
+              fromGroupSearch:
+                filter: "(member={0})"
+            groupSearchBase: "ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
+            groupSearchFilter: "(& (cn={0})(objectclass=groupOfNames))"
+            inhibitInferRootDN: false
+            managerDN: "uid=ldapservice,ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
+            managerPasswordSecret: "${LDAP_PASSWORD}"
+            server: "ldap://ldap.jumpcloud.com:389"
+            userSearchBase: "ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
+          disableMailAddressResolver: false
+          disableRolePrefixing: true
+          groupIdStrategy: "caseInsensitive"
+          userIdStrategy: "caseInsensitive"
+
+
       tool:
         nodejs:
           installations:
