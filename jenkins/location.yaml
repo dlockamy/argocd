@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-casc-location
+data:
+  jenkins.yaml: |
+    unclassified:
+      location:
+        url: https://jenkins.fairmerce.com
+        adminAddress: "address not configured yet <nobody@nowhere>"
+    jobs:
+      - script: |
+          folder('Non-Production-CAF') {
+              folder('bootstrap') {
+                  // further job definitions here
+              }
+          }
+      - script: >
+          multibranchPipelineJob('dlockamy') {
+            branchSources {
+              github {
+                // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
+                id('12312313') // IMPORTANT: use a constant and unique identifier
+                scanCredentialsId('jenkins-github-admin')
+                repoOwner('dlockamy')
+                repository('iaas')
+              }
+            }
+            orphanedItemStrategy {
+              discardOldItems {
+                numToKeep(1)
+              }
+            }
+            triggers {
+              periodicFolderTrigger {
+                interval('5')
+              }
+            }
+          }

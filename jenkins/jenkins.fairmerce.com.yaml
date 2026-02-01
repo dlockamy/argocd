@@ -7,9 +7,8 @@ spec:
   configurationAsCode:
     configurations: 
     - name: jenkins-operator-user-configuration
+    - name: jenkins-casc-location
     #- name: jenkins-casc-ldap
-    #- name: jenkins-casc-secret
-    #- name: jenkins-common-security-realms
     secret:
       name: jenkins-casc-ldap-secrets-admin
   groovyScripts:
@@ -38,6 +37,10 @@ spec:
       version: "1.6.6"
     - name: ldap
       version: "807.v7d7de30930cf"
+    - name: github-branch-source
+      version: "1936.vfa_a_5c2cef4e7"
+    - name: github
+      version: "1.45.0"
 
     disableCSRFProtection: false
     containers:
@@ -116,22 +119,13 @@ data:
               groupSearchFilter: "(& (cn={0})(objectclass=groupOfNames))"
               inhibitInferRootDN: false
               managerDN: "uid=ldapservice,ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
-              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}"
+              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}.password"
               server: "ldap://ldap.jumpcloud.com:389"
               userSearchBase: "ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
             disableMailAddressResolver: false
             disableRolePrefixing: true
             groupIdStrategy: "caseInsensitive"
             userIdStrategy: "caseInsensitive"
----
-kind: Secret
-apiVersion: v1
-type: Opaque
-metadata:
-  name: jenkins-casc-ldap-secrets-admin
-  namespace: default
-data:
-  LDAP_MANAGER_PASSWORD: SGVsbG8gd29ybGQ=
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
