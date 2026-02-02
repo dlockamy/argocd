@@ -11,20 +11,78 @@ data:
         adminAddress: "address not configured yet <nobody@nowhere>"
     jobs:
       - script: |
-          folder('Non-Production-CAF') {
-              folder('bootstrap') {
+          folder('benixos') {
+              folder('benixos') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('devicenix') {
+              folder('devicenix') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('dlockamy') {
+              folder('dlockamy') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('fairmerce') {
+              folder('fairmerce') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('quickring') {
+              folder('quickring') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('softsurve') {
+              folder('softsurve') {
+                  // further job definitions here
+              }
+          }
+      - script: |
+          folder('thunderhead.systems') {
+              folder('thunderhead.systems') {
                   // further job definitions here
               }
           }
       - script: >
-          multibranchPipelineJob('dlockamy') {
+          multibranchPipelineJob('dlockamy/iaas') {
             branchSources {
               github {
                 // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
                 id('12312313') // IMPORTANT: use a constant and unique identifier
-                scanCredentialsId('jenkins-github-admin')
+                scanCredentialsId('github-dlockamy-token')
                 repoOwner('dlockamy')
                 repository('iaas')
+              }
+            }
+            orphanedItemStrategy {
+              discardOldItems {
+                numToKeep(1)
+              }
+            }
+            triggers {
+              periodicFolderTrigger {
+                interval('5')
+              }
+            }
+          }
+      - script: >
+          multibranchPipelineJob('benixos/core') {
+            branchSources {
+              github {
+                // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
+                id('12312314') // IMPORTANT: use a constant and unique identifier
+                scanCredentialsId('github-dlockamy-token')
+                repoOwner('benixos')
+                repository('core')
               }
             }
             orphanedItemStrategy {
