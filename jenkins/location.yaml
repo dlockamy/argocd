@@ -8,7 +8,7 @@ data:
     unclassified:
       location:
         url: https://jenkins.fairmerce.com
-        adminAddress: "address not configured yet <nobody@nowhere>"
+        adminAddress: "dlockamy@fairmerce.com"
     jobs:
       - script: |
           folder('benixos') {

@@ -47,6 +47,10 @@ spec:
       version: "3.2.9"
     - name: github-oauth
       version: "685.v53b_070455063"
+    - name: ssh-slaves
+      version: "3.1096.v0b_cc466e4323"
+    - name: docker-workflow
+      version: "634.vedc7242b_eda_7"
 
     disableCSRFProtection: false
     containers:
@@ -95,6 +99,22 @@ data:
   1-system-message.yaml: |
     jenkins:
       systemMessage: "hello world"
+      crumbIssuer:
+          standard:
+            excludeClientIPFromCrumb: true
+      nodes:
+        - permanent:
+            labelString: "callisto quickring-dev yocto"
+            launcher:
+              ssh:
+                credentialsId: "jenkins-ssh-dlockamy"
+                host: "mars.softsurve.com"
+                port: 22
+                sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+            name: "mars"
+            remoteFS: "/data/external/jenkins"
+            retentionStrategy: "always"
+
     tool:
       nodejs:
         installations:
