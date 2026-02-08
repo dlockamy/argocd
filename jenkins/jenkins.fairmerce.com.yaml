@@ -8,7 +8,7 @@ spec:
     configurations: 
     - name: jenkins-operator-user-configuration
     - name: jenkins-casc-location
-    #- name: jenkins-casc-ldap
+    - name: jenkins-casc-ldap
     secret:
       name: jenkins-casc-ldap-secrets-admin
   groovyScripts:
@@ -145,13 +145,9 @@ data:
               groupSearchFilter: "(& (cn={0})(objectclass=groupOfNames))"
               inhibitInferRootDN: false
               managerDN: "uid=ldapservice,ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
-              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}.password"
+              managerPasswordSecret: "${LDAP_MANAGER_PASSWORD}"
               server: "ldap://ldap.jumpcloud.com:389"
               userSearchBase: "ou=Users,o=5b873cfea0c12e71f6fff1d0,dc=jumpcloud,dc=com"
-            disableMailAddressResolver: false
-            disableRolePrefixing: true
-            groupIdStrategy: "caseInsensitive"
-            userIdStrategy: "caseInsensitive"
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
