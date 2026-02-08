@@ -41,6 +41,12 @@ spec:
       version: "1936.vfa_a_5c2cef4e7"
     - name: github
       version: "1.45.0"
+    - name: pipeline-as-yaml
+      version: "270.vc348a_45d9214"
+    - name: matrix-auth
+      version: "3.2.9"
+    - name: github-oauth
+      version: "685.v53b_070455063"
 
     disableCSRFProtection: false
     containers:
